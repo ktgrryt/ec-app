@@ -8,7 +8,7 @@
         <feature>jdbc-4.3</feature>
     </featureManager>
 
-        <!-- 1. JDBC ドライバーの所在を宣言 -->
+    <!-- 1. JDBC ドライバーの所在を宣言 -->
     <library id="MySQLLib">
         <fileset dir="${shared.resource.dir}/mysql"
                  includes="mysql-connector-j-9.*.jar"/>
