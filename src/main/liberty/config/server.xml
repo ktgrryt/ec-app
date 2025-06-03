@@ -10,7 +10,6 @@
 
     <!-- 1. JDBC ドライバーの所在を宣言 -->
     <library id="MySQLLib">
-        <!-- バージョンアップしても拾えるよう *.jar に変更 -->
         <fileset dir="${shared.resource.dir}/mysql" includes="mysql-connector-j*.jar"/>
     </library>
 
@@ -26,7 +25,7 @@
                 type="javax.sql.XADataSource">
 
         <properties
-            serverName="localhost"
+            serverName="mysql"
             portNumber="3306"
             databaseName="mydb"
             user="myuser"
