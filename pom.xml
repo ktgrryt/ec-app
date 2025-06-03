@@ -17,7 +17,6 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
-    <!-- 既存の Jakarta EE／MicroProfile 依存関係はそのまま -->
     <dependencies>
         <dependency>
             <groupId>jakarta.platform</groupId>
@@ -37,10 +36,8 @@
     <build>
         <finalName>ec-app</finalName>
 
-        <!-- ★ JDBC ドライバをコピーする設定を追加 ★ -->
         <pluginManagement>
             <plugins>
-                <!-- WAR／Liberty Maven Plugin のバージョンは既存設定を踏襲 -->
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-war-plugin</artifactId>
@@ -55,7 +52,6 @@
         </pluginManagement>
 
         <plugins>
-            <!-- Liberty Maven Plugin に copyDependencies を設定 -->
             <plugin>
                 <groupId>io.openliberty.tools</groupId>
                 <artifactId>liberty-maven-plugin</artifactId>
