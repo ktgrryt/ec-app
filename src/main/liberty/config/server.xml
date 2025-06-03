@@ -10,8 +10,8 @@
 
     <!-- 1. JDBC ドライバーの所在を宣言 -->
     <library id="MySQLLib">
-        <fileset dir="${shared.resource.dir}/mysql"
-                 includes="mysql-connector-j-9.*.jar"/>
+        <!-- バージョンアップしても拾えるよう *.jar に変更 -->
+        <fileset dir="${shared.resource.dir}/mysql" includes="mysql-connector-j*.jar"/>
     </library>
 
     <!-- 2. XADataSource クラスは jdbcDriver に指定 -->
