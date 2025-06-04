@@ -1,7 +1,7 @@
 FROM maven:3.8-openjdk-17 as builder
 WORKDIR /app
 COPY . .
-RUN mvn -q package
+RUN mvn -q package liberty:copy-dependencies
 
 # ─────────────────────────────────────────
 FROM icr.io/appcafe/open-liberty:kernel-slim-java17-openj9-ubi
