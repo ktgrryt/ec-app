@@ -1,18 +1,20 @@
 package com.demo.rest;
 
-import java.math.BigDecimal;
-
 public class Product {
-    private int id;
+    private long id;
     private String name;
-    private BigDecimal price;
+    private String description;
+    private long categoryId;
+    private long brandId;
+    private String categoryName; // JOINクエリ用
+    private String brandName;    // JOINクエリ用
     
     // Getters and Setters
-    public int getId() {
+    public long getId() {
         return id;
     }
     
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
     }
     
@@ -24,11 +26,43 @@ public class Product {
         this.name = name;
     }
     
-    public BigDecimal getPrice() {
-        return price;
+    public String getDescription() {
+        return description;
     }
     
-    public void setPrice(BigDecimal price) {
-        this.price = price;
+    public void setDescription(String description) {
+        this.description = description;
+    }
+    
+    public long getCategoryId() {
+        return categoryId;
+    }
+    
+    public void setCategoryId(long categoryId) {
+        this.categoryId = categoryId;
+    }
+    
+    public long getBrandId() {
+        return brandId;
+    }
+    
+    public void setBrandId(long brandId) {
+        this.brandId = brandId;
+    }
+    
+    public String getCategoryName() {
+        return categoryName;
+    }
+    
+    public void setCategoryName(String categoryName) {
+        this.categoryName = categoryName;
+    }
+    
+    public String getBrandName() {
+        return brandName;
+    }
+    
+    public void setBrandName(String brandName) {
+        this.brandName = brandName;
     }
 }
