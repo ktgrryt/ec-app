@@ -3,6 +3,43 @@
 <head>
     <meta charset="UTF-8">
     <title>EC App</title>
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        .tab {
+            overflow: hidden;
+            border: 1px solid #ccc;
+            background-color: #f1f1f1;
+        }
+        .tab button {
+            background-color: inherit;
+            float: left;
+            border: none;
+            outline: none;
+            cursor: pointer;
+            padding: 14px 16px;
+            transition: 0.3s;
+        }
+        .tab button:hover {
+            background-color: #ddd;
+        }
+        .tab button.active {
+            background-color: #ccc;
+        }
+        .tabcontent {
+            display: none;
+            padding: 6px 12px;
+            border: 1px solid #ccc;
+            border-top: none;
+        }
+    </style>
     <script>
         function loadProducts() {
             fetch('/ec-app/rest/api/products')
@@ -22,33 +59,142 @@
                         nameCell.textContent = product.name;
                         row.appendChild(nameCell);
                         
-                        const priceCell = document.createElement('td');
-                        priceCell.textContent = product.price;
-                        row.appendChild(priceCell);
+                        const descCell = document.createElement('td');
+                        descCell.textContent = product.description;
+                        row.appendChild(descCell);
+                        
+                        const categoryCell = document.createElement('td');
+                        categoryCell.textContent = product.categoryName;
+                        row.appendChild(categoryCell);
+                        
+                        const brandCell = document.createElement('td');
+                        brandCell.textContent = product.brandName;
+                        row.appendChild(brandCell);
                         
                         tableBody.appendChild(row);
                     });
+                    document.getElementById('productsTab').style.display = 'block';
+                    document.getElementById('categoriesTab').style.display = 'none';
+                    document.getElementById('brandsTab').style.display = 'none';
                 })
                 .catch(error => console.error('Error loading products:', error));
         }
+
+        function loadCategories() {
+            fetch('/ec-app/rest/api/categories')
+                .then(response => response.json())
+                .then(categories => {
+                    const tableBody = document.getElementById('categoryTable');
+                    tableBody.innerHTML = ''; // テーブルをクリア
+                    
+                    categories.forEach(category => {
+                        const row = document.createElement('tr');
+                        
+                        const idCell = document.createElement('td');
+                        idCell.textContent = category.id;
+                        row.appendChild(idCell);
+                        
+                        const nameCell = document.createElement('td');
+                        nameCell.textContent = category.name;
+                        row.appendChild(nameCell);
+                        
+                        tableBody.appendChild(row);
+                    });
+                    document.getElementById('productsTab').style.display = 'none';
+                    document.getElementById('categoriesTab').style.display = 'block';
+                    document.getElementById('brandsTab').style.display = 'none';
+                })
+                .catch(error => console.error('Error loading categories:', error));
+        }
+
+        function loadBrands() {
+            fetch('/ec-app/rest/api/brands')
+                .then(response => response.json())
+                .then(brands => {
+                    const tableBody = document.getElementById('brandTable');
+                    tableBody.innerHTML = ''; // テーブルをクリア
+                    
+                    brands.forEach(brand => {
+                        const row = document.createElement('tr');
+                        
+                        const idCell = document.createElement('td');
+                        idCell.textContent = brand.id;
+                        row.appendChild(idCell);
+                        
+                        const nameCell = document.createElement('td');
+                        nameCell.textContent = brand.name;
+                        row.appendChild(nameCell);
+                        
+                        tableBody.appendChild(row);
+                    });
+                    document.getElementById('productsTab').style.display = 'none';
+                    document.getElementById('categoriesTab').style.display = 'none';
+                    document.getElementById('brandsTab').style.display = 'block';
+                })
+                .catch(error => console.error('Error loading brands:', error));
+        }
+
+        // ページロード時に商品一覧を表示
+        window.onload = function() {
+            loadProducts();
+        };
     </script>
 </head>
 <body>
     <h2>EC サンプルアプリへようこそ</h2>
-    <button onclick="loadProducts()">商品一覧を見る</button>
     
-    <h1>商品一覧</h1>
-    <table border="1">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Name</th>
-                <th>Price</th>
-            </tr>
-        </thead>
-        <tbody id="productTable">
-            <!-- 商品データがここに表示されます -->
-        </tbody>
-    </table>
+    <div class="tab">
+        <button onclick="loadProducts()">商品一覧</button>
+        <button onclick="loadCategories()">カテゴリ一覧</button>
+        <button onclick="loadBrands()">ブランド一覧</button>
+    </div>
+    
+    <div id="productsTab" class="tabcontent">
+        <h3>商品一覧</h3>
+        <table border="1">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>名前</th>
+                    <th>説明</th>
+                    <th>カテゴリ</th>
+                    <th>ブランド</th>
+                </tr>
+            </thead>
+            <tbody id="productTable">
+                <!-- 商品データがここに表示されます -->
+            </tbody>
+        </table>
+    </div>
+    
+    <div id="categoriesTab" class="tabcontent">
+        <h3>カテゴリ一覧</h3>
+        <table border="1">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>名前</th>
+                </tr>
+            </thead>
+            <tbody id="categoryTable">
+                <!-- カテゴリデータがここに表示されます -->
+            </tbody>
+        </table>
+    </div>
+    
+    <div id="brandsTab" class="tabcontent">
+        <h3>ブランド一覧</h3>
+        <table border="1">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>名前</th>
+                </tr>
+            </thead>
+            <tbody id="brandTable">
+                <!-- ブランドデータがここに表示されます -->
+            </tbody>
+        </table>
+    </div>
 </body>
 </html>
