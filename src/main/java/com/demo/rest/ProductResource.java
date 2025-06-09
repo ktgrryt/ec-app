@@ -4,11 +4,13 @@ import jakarta.annotation.Resource;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.MediaType;
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -52,9 +54,65 @@ public class ProductResource {
     }
     
     @GET
+    @Path("/search")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<Product> searchProducts(
+            @QueryParam("productName") String productName,
+            @QueryParam("categoryName") String categoryName,
+            @QueryParam("brandName") String brandName) throws SQLException {
+        
+        List<Product> products = new ArrayList<>();
+        
+        // 意図的に遅いクエリを作成
+        String sql = "SELECT " +
+                     "p.id, p.name, p.description, " +
+                     "c.name AS category_name, " +
+                     "b.name AS brand_name " +
+                     "FROM products p " +
+                     "JOIN categories c ON p.category_id = c.id " +
+                     "JOIN brands b ON p.brand_id = b.id " +
+                     "WHERE " +
+                     "p.name LIKE ? " +
+                     "OR p.description LIKE ? " + 
+                     "OR c.name LIKE ? " +
+                     "OR b.name LIKE ? " +
+                     "ORDER BY p.id DESC " +
+                     "LIMIT 20";
+        
+        try (Connection conn = ds.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            
+            // パラメータの設定
+            String productSearch = "%" + (productName != null ? productName : "") + "%";
+            String categorySearch = "%" + (categoryName != null ? categoryName : "") + "%";
+            String brandSearch = "%" + (brandName != null ? brandName : "") + "%";
+            
+            pstmt.setString(1, productSearch);
+            pstmt.setString(2, productSearch);  // 説明も同じ検索語で検索
+            pstmt.setString(3, categorySearch);
+            pstmt.setString(4, brandSearch);
+            
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    Product product = new Product();
+                    product.setId(rs.getLong("id"));
+                    product.setName(rs.getString("name"));
+                    product.setDescription(rs.getString("description"));
+                    product.setCategoryName(rs.getString("category_name"));
+                    product.setBrandName(rs.getString("brand_name"));
+                    products.add(product);
+                }
+            }
+        }
+        
+        return products;
+    }
+    
+    @GET
     @Path("/categories")
     @Produces(MediaType.APPLICATION_JSON)
     public List<Category> getCategories() throws SQLException {
+        // 既存のコードをそのまま維持
         List<Category> categories = new ArrayList<>();
         
         try (Connection conn = ds.getConnection();
@@ -76,6 +134,7 @@ public class ProductResource {
     @Path("/brands")
     @Produces(MediaType.APPLICATION_JSON)
     public List<Brand> getBrands() throws SQLException {
+        // 既存のコードをそのまま維持
         List<Brand> brands = new ArrayList<>();
         
         try (Connection conn = ds.getConnection();
