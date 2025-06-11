@@ -77,7 +77,7 @@ public class ProductResource {
                     "AND (? = '' OR c.name LIKE ?) " +
                     "AND (? = '' OR b.name LIKE ?) " +
                     "ORDER BY p.id DESC " +
-                    "LIMIT 20";
+                    "LIMIT 100";
         
         try (Connection conn = ds.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
