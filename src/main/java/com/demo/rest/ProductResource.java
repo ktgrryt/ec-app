@@ -64,20 +64,25 @@ public class ProductResource {
         List<Product> products = new ArrayList<>();
         
         // 意図的に遅いクエリを作成
-        String sql = "SELECT " +
+        String sql = "SELECT * FROM (" +
+                    "SELECT " +
                     "p.id, p.name, p.description, " +
                     "c.name AS category_name, " +
-                    "b.name AS brand_name " +
+                    "b.name AS brand_name, " +
+                    "(SELECT COUNT(*) FROM products WHERE created_at < p.created_at) AS older_product_count " +
                     "FROM products p " +
                     "LEFT JOIN categories c ON p.category_id = c.id  " +
                     "LEFT JOIN brands b ON p.brand_id = b.id " +
                     "WHERE " +
-                    "(? = '' OR p.name LIKE ?) " +
-                    "AND (? = '' OR p.description LIKE ?) " + 
-                    "AND (? = '' OR c.name LIKE ?) " +
-                    "AND (? = '' OR b.name LIKE ?) " +
-                    "ORDER BY p.id DESC " +
+                    "(? = '' OR p.name LIKE CONCAT('%', ?, '%')) " +
+                    "AND (? = '' OR p.description LIKE CONCAT('%', ?, '%')) " + 
+                    "AND (? = '' OR c.name LIKE CONCAT('%', ?, '%')) " +
+                    "AND (? = '' OR b.name LIKE CONCAT('%', ?, '%')) " +
+                    ") AS all_products " +
+                    "ORDER BY older_product_count DESC " +
                     "LIMIT 100";
+
+
         
         try (Connection conn = ds.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
