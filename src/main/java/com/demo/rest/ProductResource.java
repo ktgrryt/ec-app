@@ -69,7 +69,7 @@ public class ProductResource {
                     "p.id, p.name, p.description, " +
                     "c.name AS category_name, " +
                     "b.name AS brand_name, " +
-                    "(SELECT COUNT(*) FROM products WHERE created_at < p.created_at) AS older_product_count " +
+                    "(SELECT COUNT(*) FROM products WHERE id < p.id) AS products_with_lower_id " +
                     "FROM products p " +
                     "LEFT JOIN categories c ON p.category_id = c.id  " +
                     "LEFT JOIN brands b ON p.brand_id = b.id " +
@@ -79,8 +79,9 @@ public class ProductResource {
                     "AND (? = '' OR c.name LIKE CONCAT('%', ?, '%')) " +
                     "AND (? = '' OR b.name LIKE CONCAT('%', ?, '%')) " +
                     ") AS all_products " +
-                    "ORDER BY older_product_count DESC " +
+                    "ORDER BY products_with_lower_id DESC " +
                     "LIMIT 100";
+
 
 
         
