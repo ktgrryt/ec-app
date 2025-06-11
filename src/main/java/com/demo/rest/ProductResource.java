@@ -69,8 +69,8 @@ public class ProductResource {
                     "c.name AS category_name, " +
                     "b.name AS brand_name " +
                     "FROM products p " +
-                    "JOIN categories c ON p.category_id = c.id " +
-                    "JOIN brands b ON p.brand_id = b.id " +
+                    "LEFT JOIN categories c ON p.category_id = c.id  " +
+                    "LEFT JOIN brands b ON p.brand_id = b.id " +
                     "WHERE " +
                     "(? = '' OR p.name LIKE ?) " +
                     "AND (? = '' OR p.description LIKE ?) " + 
@@ -82,20 +82,20 @@ public class ProductResource {
         try (Connection conn = ds.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             
-        // パラメータの設定
-        String productSearch = "%" + (productName != null ? productName : "") + "%";
-        String categorySearch = "%" + (categoryName != null ? categoryName : "") + "%";
-        String brandSearch = "%" + (brandName != null ? brandName : "") + "%";
+            // パラメータの設定
+            String productSearch = "%" + (productName != null ? productName : "") + "%";
+            String categorySearch = "%" + (categoryName != null ? categoryName : "") + "%";
+            String brandSearch = "%" + (brandName != null ? brandName : "") + "%";
 
-        // 各条件のチェック用と実際の検索用、2回ずつパラメータを設定
-        pstmt.setString(1, productName != null ? productName : "");
-        pstmt.setString(2, productSearch);
-        pstmt.setString(3, productName != null ? productName : "");  // 説明も同じ検索語で検索
-        pstmt.setString(4, productSearch);
-        pstmt.setString(5, categoryName != null ? categoryName : "");
-        pstmt.setString(6, categorySearch);
-        pstmt.setString(7, brandName != null ? brandName : "");
-        pstmt.setString(8, brandSearch);
+            // 各条件のチェック用と実際の検索用、2回ずつパラメータを設定
+            pstmt.setString(1, productName != null ? productName : "");
+            pstmt.setString(2, productSearch);
+            pstmt.setString(3, productName != null ? productName : "");  // 説明も同じ検索語で検索
+            pstmt.setString(4, productSearch);
+            pstmt.setString(5, categoryName != null ? categoryName : "");
+            pstmt.setString(6, categorySearch);
+            pstmt.setString(7, brandName != null ? brandName : "");
+            pstmt.setString(8, brandSearch);
 
             
             try (ResultSet rs = pstmt.executeQuery()) {
