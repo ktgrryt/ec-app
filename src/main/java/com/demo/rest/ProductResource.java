@@ -63,25 +63,21 @@ public class ProductResource {
         
         List<Product> products = new ArrayList<>();
         
-        // 意図的に遅いクエリを作成
-        String sql = "SELECT * FROM (" +
-                    "SELECT " +
+        String sql = "SELECT " +
                     "p.id, p.name, p.description, " +
                     "c.name AS category_name, " +
                     "b.name AS brand_name, " +
-                    "(SELECT COUNT(*) FROM products WHERE id < p.id) AS products_with_lower_id " +
+                    "(SELECT AVG(id) FROM products WHERE id % 100 < 50) AS random_metric " +
                     "FROM products p " +
-                    "LEFT JOIN categories c ON p.category_id = c.id  " +
+                    "LEFT JOIN categories c ON p.category_id = c.id " +
                     "LEFT JOIN brands b ON p.brand_id = b.id " +
                     "WHERE " +
                     "(? = '' OR p.name LIKE CONCAT('%', ?, '%')) " +
                     "AND (? = '' OR p.description LIKE CONCAT('%', ?, '%')) " + 
                     "AND (? = '' OR c.name LIKE CONCAT('%', ?, '%')) " +
                     "AND (? = '' OR b.name LIKE CONCAT('%', ?, '%')) " +
-                    ") AS all_products " +
-                    "ORDER BY products_with_lower_id DESC " +
+                    "ORDER BY p.id * (SELECT COUNT(*)/1000 + 1 FROM products) " +
                     "LIMIT 100";
-
 
 
         
