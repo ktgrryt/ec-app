@@ -78,8 +78,6 @@ public class ProductResource {
                     "AND (? = '' OR b.name LIKE CONCAT('%', ?, '%')) " +
                     "ORDER BY p.id * (SELECT COUNT(*)/1000 + 1 FROM products) " +
                     "LIMIT 100";
-
-
         
         try (Connection conn = ds.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
