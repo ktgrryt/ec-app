@@ -1,6 +1,7 @@
 package com.demo.rest;
 
 import jakarta.annotation.Resource;
+import jakarta.ws.rs.DefaultValue;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
@@ -59,9 +60,12 @@ public class ProductResource {
     public List<Product> searchProducts(
             @QueryParam("productName") String productName,
             @QueryParam("categoryName") String categoryName,
-            @QueryParam("brandName") String brandName) throws SQLException {
+            @QueryParam("brandName") String brandName,
+            @QueryParam("page") @DefaultValue("1") int page) throws SQLException {
         
         List<Product> products = new ArrayList<>();
+        int pageSize = 100;
+        int offset = (page - 1) * pageSize;
         
         String sql = "SELECT " +
                     "p.id, p.name, p.description, " +
@@ -77,26 +81,28 @@ public class ProductResource {
                     "AND (? = '' OR c.name LIKE CONCAT('%', ?, '%')) " +
                     "AND (? = '' OR b.name LIKE CONCAT('%', ?, '%')) " +
                     "ORDER BY p.id * (SELECT COUNT(*)/1000 + 1 FROM products) " +
-                    "LIMIT 100";
+                    "LIMIT ? OFFSET ?";
         
         try (Connection conn = ds.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            PreparedStatement pstmt = conn.prepareStatement(sql)) {
             
-            // パラメータの設定
+            // パラメータの設定（既存の8つのパラメータ）
             String productSearch = "%" + (productName != null ? productName : "") + "%";
             String categorySearch = "%" + (categoryName != null ? categoryName : "") + "%";
             String brandSearch = "%" + (brandName != null ? brandName : "") + "%";
 
-            // 各条件のチェック用と実際の検索用、2回ずつパラメータを設定
             pstmt.setString(1, productName != null ? productName : "");
             pstmt.setString(2, productSearch);
-            pstmt.setString(3, productName != null ? productName : "");  // 説明も同じ検索語で検索
+            pstmt.setString(3, productName != null ? productName : "");
             pstmt.setString(4, productSearch);
             pstmt.setString(5, categoryName != null ? categoryName : "");
             pstmt.setString(6, categorySearch);
             pstmt.setString(7, brandName != null ? brandName : "");
             pstmt.setString(8, brandSearch);
-
+            
+            // 新しいパラメータ：LIMIT と OFFSET
+            pstmt.setInt(9, pageSize);
+            pstmt.setInt(10, offset);
             
             try (ResultSet rs = pstmt.executeQuery()) {
                 while (rs.next()) {
@@ -113,6 +119,52 @@ public class ProductResource {
         
         return products;
     }
+
+    // 検索結果の総数を返すエンドポイントを追加
+    @GET
+    @Path("/search/count")
+    @Produces(MediaType.APPLICATION_JSON)
+    public int searchProductsCount(
+            @QueryParam("productName") String productName,
+            @QueryParam("categoryName") String categoryName,
+            @QueryParam("brandName") String brandName) throws SQLException {
+        
+        String sql = "SELECT COUNT(*) AS total " +
+                    "FROM products p " +
+                    "LEFT JOIN categories c ON p.category_id = c.id " +
+                    "LEFT JOIN brands b ON p.brand_id = b.id " +
+                    "WHERE " +
+                    "(? = '' OR p.name LIKE CONCAT('%', ?, '%')) " +
+                    "AND (? = '' OR p.description LIKE CONCAT('%', ?, '%')) " + 
+                    "AND (? = '' OR c.name LIKE CONCAT('%', ?, '%')) " +
+                    "AND (? = '' OR b.name LIKE CONCAT('%', ?, '%'))";
+        
+        try (Connection conn = ds.getConnection();
+            PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            
+            String productSearch = "%" + (productName != null ? productName : "") + "%";
+            String categorySearch = "%" + (categoryName != null ? categoryName : "") + "%";
+            String brandSearch = "%" + (brandName != null ? brandName : "") + "%";
+
+            pstmt.setString(1, productName != null ? productName : "");
+            pstmt.setString(2, productSearch);
+            pstmt.setString(3, productName != null ? productName : "");
+            pstmt.setString(4, productSearch);
+            pstmt.setString(5, categoryName != null ? categoryName : "");
+            pstmt.setString(6, categorySearch);
+            pstmt.setString(7, brandName != null ? brandName : "");
+            pstmt.setString(8, brandSearch);
+            
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("total");
+                }
+            }
+        }
+        
+        return 0;
+    }
+
     
     @GET
     @Path("/categories")

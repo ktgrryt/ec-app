@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ShopEase - オンラインショッピング</title>
+    <title>DemoShop - オンラインショッピング</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <style>
         /* 全体のスタイル */
@@ -417,7 +417,7 @@
     <!-- ヘッダー -->
     <header>
         <div class="top-header">
-            <div class="logo">Shop<span>Ease</span></div>
+            <div class="logo">Demo<span>Shop</span></div>
             <div class="user-actions">
                 <a href="#"><i class="fas fa-heart"></i> お気に入り</a>
                 <a href="#"><i class="fas fa-user"></i> ログイン</a>
@@ -503,12 +503,18 @@
             </div>
         </div>
         <div class="copyright">
-            &copy; 2023 ShopEase. All Rights Reserved.
+            &copy; 2025 DemoShop. All Rights Reserved.
         </div>
     </footer>
 
     <script>
-        function searchProducts() {
+        // グローバル変数の追加
+        let currentPage = 1;
+        let totalProducts = 0;
+        let lastSearchParams = {};
+        const pageSize = 100;
+
+        function searchProducts(page = 1) {
             event.preventDefault(); // フォーム送信のデフォルト動作を防止
             
             // 検索パラメータを取得
@@ -516,12 +522,23 @@
             const categoryName = document.getElementById('categoryName').value;
             const brandName = document.getElementById('brandName').value;
             
+            // 検索パラメータを保存
+            lastSearchParams = { productName, categoryName, brandName };
+            currentPage = page;
+            
             // ローディング表示
             document.getElementById('loading').style.display = 'block';
             document.getElementById('product-container').innerHTML = '';
             
-            // 検索APIを呼び出し
-            fetch(`/ec-app/rest/api/search?productName=${encodeURIComponent(productName)}&categoryName=${encodeURIComponent(categoryName)}&brandName=${encodeURIComponent(brandName)}`)
+            // まず総件数を取得
+            fetch(`/ec-app/rest/api/search/count?productName=${encodeURIComponent(productName)}&categoryName=${encodeURIComponent(categoryName)}&brandName=${encodeURIComponent(brandName)}`)
+                .then(response => response.json())
+                .then(count => {
+                    totalProducts = count;
+                    
+                    // 次に指定されたページの商品を取得
+                    return fetch(`/ec-app/rest/api/search?productName=${encodeURIComponent(productName)}&categoryName=${encodeURIComponent(categoryName)}&brandName=${encodeURIComponent(brandName)}&page=${page}`);
+                })
                 .then(response => response.json())
                 .then(products => {
                     const productContainer = document.getElementById('product-container');
@@ -539,14 +556,15 @@
                             </div>
                         `;
                         document.getElementById('results-count').textContent = '0件';
+                        updatePagination(0);
                         return;
                     }
                     
                     // 検索結果数の表示
-                    document.getElementById('results-count').textContent = `${products.length}件`;
+                    document.getElementById('results-count').textContent = `${totalProducts}件中 ${(page-1)*pageSize + 1}～${Math.min(page*pageSize, totalProducts)}件を表示`;
                     
                     products.forEach(product => {
-                        // 商品カードの作成
+                        // 商品カードの作成（既存コード）
                         const productCard = document.createElement('div');
                         productCard.className = 'product-card';
                         
@@ -596,6 +614,9 @@
                         
                         productContainer.appendChild(productCard);
                     });
+                    
+                    // ページネーションの更新
+                    updatePagination(totalProducts);
                 })
                 .catch(error => {
                     console.error('Error searching products:', error);
@@ -607,10 +628,89 @@
                             <p class="no-results-help">しばらく経ってから再度お試しください</p>
                         </div>
                     `;
+                    updatePagination(0);
                 });
         }
 
-        // ページロード時に初期表示
+        // ページネーションを更新する関数
+        function updatePagination(totalItems) {
+            const pagination = document.getElementById('pagination');
+            pagination.innerHTML = '';
+            
+            if (totalItems === 0) {
+                pagination.style.display = 'none';
+                return;
+            }
+            
+            pagination.style.display = 'flex';
+            const totalPages = Math.ceil(totalItems / pageSize);
+            
+            // 「前へ」ボタン
+            if (currentPage > 1) {
+                const prevButton = document.createElement('button');
+                prevButton.className = 'pagination-button';
+                prevButton.innerHTML = '<i class="fas fa-chevron-left"></i> 前へ';
+                prevButton.addEventListener('click', () => searchProducts(currentPage - 1));
+                pagination.appendChild(prevButton);
+            }
+            
+            // ページボタンの表示（現在のページの前後2ページと最初・最後のページ）
+            const pagesToShow = [];
+            
+            // 最初のページは常に表示
+            pagesToShow.push(1);
+            
+            // 現在のページの前後のページ
+            for (let i = Math.max(2, currentPage - 2); i <= Math.min(totalPages - 1, currentPage + 2); i++) {
+                pagesToShow.push(i);
+            }
+            
+            // 最後のページは常に表示（2ページ以上ある場合）
+            if (totalPages > 1) {
+                pagesToShow.push(totalPages);
+            }
+            
+            // 重複を取り除き、ソート
+            const uniquePages = [...new Set(pagesToShow)].sort((a, b) => a - b);
+            
+            // ページ番号の間に「...」を挿入
+            let prevPage = 0;
+            for (const page of uniquePages) {
+                if (prevPage + 1 < page) {
+                    const ellipsis = document.createElement('button');
+                    ellipsis.className = 'pagination-button disabled';
+                    ellipsis.innerHTML = '<i class="fas fa-ellipsis-h"></i>';
+                    ellipsis.disabled = true;
+                    pagination.appendChild(ellipsis);
+                }
+                
+                const pageButton = document.createElement('button');
+                pageButton.className = 'pagination-button';
+                if (page === currentPage) {
+                    pageButton.classList.add('active');
+                }
+                pageButton.textContent = page;
+                pageButton.addEventListener('click', () => {
+                    if (page !== currentPage) {
+                        searchProducts(page);
+                    }
+                });
+                pagination.appendChild(pageButton);
+                
+                prevPage = page;
+            }
+            
+            // 「次へ」ボタン
+            if (currentPage < totalPages) {
+                const nextButton = document.createElement('button');
+                nextButton.className = 'pagination-button';
+                nextButton.innerHTML = '次へ <i class="fas fa-chevron-right"></i>';
+                nextButton.addEventListener('click', () => searchProducts(currentPage + 1));
+                pagination.appendChild(nextButton);
+            }
+        }
+
+        // ページロード時の初期表示
         window.onload = function() {
             document.getElementById('product-container').innerHTML = `
                 <div class="no-results">
@@ -620,15 +720,14 @@
                 </div>
             `;
             
-            // ページネーションボタンのイベント（デモのみ）
-            document.querySelectorAll('.pagination-button').forEach(button => {
-                button.addEventListener('click', function() {
-                    if (!this.classList.contains('active')) {
-                        document.querySelector('.pagination-button.active').classList.remove('active');
-                        this.classList.add('active');
-                    }
-                });
-            });
+            // ページ初期表示時はページネーションを非表示
+            document.getElementById('pagination').style.display = 'none';
+            
+            // フォームの送信イベントを上書き
+            document.querySelector('.search-form').onsubmit = function(event) {
+                event.preventDefault();
+                searchProducts(1); // 検索時は常に1ページ目から表示
+            };
             
             // カートボタンとお気に入りボタンのイベント（デモのみ）
             document.addEventListener('click', function(e) {
@@ -654,6 +753,7 @@
                 }
             });
         };
+
     </script>
 </body>
 </html>
