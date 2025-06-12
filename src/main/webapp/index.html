@@ -197,6 +197,9 @@
             box-shadow: 0 2px 10px rgba(0,0,0,0.05);
             transition: transform 0.3s, box-shadow 0.3s;
             cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
         }
 
         .product-card:hover {
@@ -216,6 +219,9 @@
 
         .product-info {
             padding: 15px;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
         }
 
         .product-name {
@@ -223,6 +229,7 @@
             margin-bottom: 8px;
             color: #333;
             font-size: 16px;
+            min-height: 1.6em;
         }
 
         .product-description {
@@ -234,6 +241,7 @@
             -webkit-box-orient: vertical;
             overflow: hidden;
             text-overflow: ellipsis;
+            min-height: 2.8em;
         }
 
         .product-meta {
@@ -241,6 +249,7 @@
             font-size: 12px;
             color: #888;
             gap: 10px;
+            margin-bottom: 15px;
         }
 
         .product-meta span {
@@ -250,7 +259,7 @@
         }
 
         .product-actions {
-            margin-top: 15px;
+            margin-top: auto;
             display: flex;
             justify-content: space-between;
         }
@@ -732,7 +741,7 @@
             // カートボタンとお気に入りボタンのイベント（デモのみ）
             document.addEventListener('click', function(e) {
                 if (e.target.classList.contains('add-to-cart') || e.target.parentElement.classList.contains('add-to-cart')) {
-                    alert('カートに追加されました！（デモ機能）');
+                    alert('カートに追加されました');
                     
                     // カウントを更新
                     const cartCount = document.querySelector('.cart-count');
@@ -745,15 +754,14 @@
                     
                     if (icon.classList.contains('far')) {
                         icon.classList.replace('far', 'fas');
-                        alert('お気に入りに追加されました！（デモ機能）');
+                        alert('お気に入りに追加されました');
                     } else {
                         icon.classList.replace('fas', 'far');
-                        alert('お気に入りから削除されました！（デモ機能）');
+                        alert('お気に入りから削除されました');
                     }
                 }
             });
         };
-
     </script>
 </body>
 </html>
