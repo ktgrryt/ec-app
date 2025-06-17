@@ -3,10 +3,10 @@
 
     <!-- Enable features -->
     <featureManager>
-        <feature>jakartaee-10.0</feature>
-        <feature>microProfile-7.0</feature>
-        <feature>jdbc-4.3</feature>
-        <feature>monitor-1.0</feature>
+        <feature>restfulWS-3.1</feature>    <!-- REST API機能 -->
+        <feature>jdbc-4.3</feature>         <!-- データベース接続 -->
+        <feature>cdi-4.0</feature>          <!-- リソースインジェクション -->
+        <feature>jsonb-3.0</feature>        <!-- JSONバインディング -->
     </featureManager>
 
     <!-- 1. JDBC ドライバーの所在を宣言 -->
