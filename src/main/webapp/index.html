@@ -157,6 +157,34 @@
             background-color: #3a70b9;
         }
 
+        .search-input select {
+            width: 100%;
+            padding: 10px 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+            appearance: auto; /* デフォルトのセレクト矢印を表示 */
+            background-color: white;
+        }
+
+        .search-input select:focus {
+            outline: none;
+            border-color: #4a89dc;
+            box-shadow: 0 0 0 2px rgba(74, 137, 220, 0.2);
+        }
+
+        .search-input optgroup {
+            font-weight: bold;
+            color: #4a89dc;
+        }
+
+        .search-input option {
+            font-weight: normal;
+            color: #333;
+        }
+
+
         /* 検索結果数表示 */
         .results-count {
             margin-bottom: 20px;
@@ -447,7 +475,136 @@
                     <input type="text" id="productName" placeholder="商品名" />
                 </div>
                 <div class="search-input">
-                    <input type="text" id="categoryName" placeholder="カテゴリ名" />
+                    <select id="categoryName">
+                        <option value="">カテゴリを選択</option>
+                        <!-- 電子機器・IT関連 -->
+                        <optgroup label="電子機器・IT関連">
+                            <option value="スマートフォン">スマートフォン</option>
+                            <option value="タブレット">タブレット</option>
+                            <option value="ノートPC">ノートPC</option>
+                            <option value="デスクトップPC">デスクトップPC</option>
+                            <option value="スマートウォッチ">スマートウォッチ</option>
+                            <option value="ワイヤレスイヤホン">ワイヤレスイヤホン</option>
+                            <option value="ヘッドホン">ヘッドホン</option>
+                            <option value="スピーカー">スピーカー</option>
+                            <option value="テレビ">テレビ</option>
+                            <option value="モニター">モニター</option>
+                            <option value="ゲーム機">ゲーム機</option>
+                            <option value="カメラ">カメラ</option>
+                            <option value="ビデオカメラ">ビデオカメラ</option>
+                            <option value="プロジェクター">プロジェクター</option>
+                            <option value="プリンター">プリンター</option>
+                            <option value="スキャナー">スキャナー</option>
+                            <option value="外付けHDD">外付けHDD</option>
+                            <option value="SSD">SSD</option>
+                            <option value="USBメモリ">USBメモリ</option>
+                            <option value="マウス">マウス</option>
+                            <option value="キーボード">キーボード</option>
+                            <option value="ルーター">ルーター</option>
+                            <option value="ドローン">ドローン</option>
+                            <option value="VRヘッドセット">VRヘッドセット</option>
+                            <option value="電子書籍リーダー">電子書籍リーダー</option>
+                        </optgroup>
+                        
+                        <!-- 家電 -->
+                        <optgroup label="家電">
+                            <option value="冷蔵庫">冷蔵庫</option>
+                            <option value="洗濯機">洗濯機</option>
+                            <option value="電子レンジ">電子レンジ</option>
+                            <option value="オーブン">オーブン</option>
+                            <option value="炊飯器">炊飯器</option>
+                            <option value="掃除機">掃除機</option>
+                            <option value="空気清浄機">空気清浄機</option>
+                            <option value="加湿器">加湿器</option>
+                            <option value="除湿機">除湿機</option>
+                            <option value="エアコン">エアコン</option>
+                            <option value="ドライヤー">ドライヤー</option>
+                            <option value="アイロン">アイロン</option>
+                            <option value="コーヒーメーカー">コーヒーメーカー</option>
+                            <option value="ミキサー">ミキサー</option>
+                            <option value="トースター">トースター</option>
+                            <option value="食器洗い機">食器洗い機</option>
+                            <option value="電気ポット">電気ポット</option>
+                            <option value="ホットプレート">ホットプレート</option>
+                            <option value="扇風機">扇風機</option>
+                            <option value="電気毛布">電気毛布</option>
+                        </optgroup>
+                        
+                        <!-- 家具・インテリア -->
+                        <optgroup label="家具・インテリア">
+                            <option value="ソファ">ソファ</option>
+                            <option value="椅子">椅子</option>
+                            <option value="テーブル">テーブル</option>
+                            <option value="ベッド">ベッド</option>
+                            <option value="デスク">デスク</option>
+                            <option value="本棚">本棚</option>
+                            <option value="食器棚">食器棚</option>
+                            <option value="タンス">タンス</option>
+                            <option value="クローゼット">クローゼット</option>
+                            <option value="テレビ台">テレビ台</option>
+                            <option value="照明">照明</option>
+                            <option value="カーテン">カーテン</option>
+                            <option value="カーペット">カーペット</option>
+                            <option value="クッション">クッション</option>
+                            <option value="観葉植物">観葉植物</option>
+                        </optgroup>
+                        
+                        <!-- 衣類・ファッション -->
+                        <optgroup label="衣類・ファッション">
+                            <option value="Tシャツ">Tシャツ</option>
+                            <option value="シャツ">シャツ</option>
+                            <option value="パンツ">パンツ</option>
+                            <option value="ジーンズ">ジーンズ</option>
+                            <option value="スカート">スカート</option>
+                            <option value="ドレス">ドレス</option>
+                            <option value="スーツ">スーツ</option>
+                            <option value="コート">コート</option>
+                            <option value="ジャケット">ジャケット</option>
+                            <option value="セーター">セーター</option>
+                            <option value="カーディガン">カーディガン</option>
+                            <option value="パーカー">パーカー</option>
+                            <option value="靴下">靴下</option>
+                            <option value="下着">下着</option>
+                            <option value="帽子">帽子</option>
+                        </optgroup>
+                        
+                        <!-- 食品・飲料 -->
+                        <optgroup label="食品・飲料">
+                            <option value="チョコレート">チョコレート</option>
+                            <option value="クッキー">クッキー</option>
+                            <option value="アイスクリーム">アイスクリーム</option>
+                            <option value="スナック">スナック</option>
+                            <option value="ドリンク">ドリンク</option>
+                            <option value="調味料">調味料</option>
+                            <option value="パスタ">パスタ</option>
+                            <option value="米">米</option>
+                            <option value="パン">パン</option>
+                            <option value="シリアル">シリアル</option>
+                        </optgroup>
+                        
+                        <!-- スポーツ・アウトドア -->
+                        <optgroup label="スポーツ・アウトドア">
+                            <option value="テニスラケット">テニスラケット</option>
+                            <option value="ゴルフクラブ">ゴルフクラブ</option>
+                            <option value="サッカーボール">サッカーボール</option>
+                            <option value="バスケットボール">バスケットボール</option>
+                            <option value="野球グローブ">野球グローブ</option>
+                            <option value="ランニングシューズ">ランニングシューズ</option>
+                            <option value="自転車">自転車</option>
+                            <option value="テント">テント</option>
+                            <option value="寝袋">寝袋</option>
+                            <option value="登山リュック">登山リュック</option>
+                        </optgroup>
+                        
+                        <!-- 美容・健康 -->
+                        <optgroup label="美容・健康">
+                            <option value="化粧品">化粧品</option>
+                            <option value="香水">香水</option>
+                            <option value="スキンケア">スキンケア</option>
+                            <option value="サプリメント">サプリメント</option>
+                            <option value="マッサージ機">マッサージ機</option>
+                        </optgroup>
+                    </select>
                 </div>
                 <div class="search-input">
                     <input type="text" id="brandName" placeholder="ブランド名" />
@@ -455,6 +612,7 @@
                 <button type="submit"><i class="fas fa-search"></i> 検索</button>
             </form>
         </div>
+
         
         <!-- 検索結果数表示 -->
         <div class="results-count" id="results-count"></div>
