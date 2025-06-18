@@ -1,2 +1,2 @@
--Xms64m
--Xmx64m
+-Xms32m
+-Xmx32m
